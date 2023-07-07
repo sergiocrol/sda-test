@@ -13,8 +13,8 @@ export default async function requestHandler(
       const { id, output, prompt, init_image, control_image } = req.body as QR;
 
       const insertQuery = `
-      INSERT INTO qr_codes (id, output, prompt, init_image, control_image)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO qr_codes (output, prompt, init_image, control_image)
+      VALUES ($2, $3, $4, $5)
       RETURNING *
     `;
 
