@@ -26,11 +26,11 @@ import { TypographyH1 } from "@/components/ui/typography";
 export const FALLBACK_IMAGE = "placeholder.webp";
 
 export default function Home() {
-  const {
-    data: QRData,
-    error,
-    isLoading: QRLoadingData,
-  } = useSwr<{ qrs: QR[] }>("/api/qr", fetcher);
+  // const {
+  //   data: QRData,
+  //   error,
+  //   isLoading: QRLoadingData,
+  // } = useSwr<{ qrs: QR[] }>("/api/qr", fetcher);
   const { request, data, isLoading } = useGenerateQR();
 
   const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
@@ -48,7 +48,7 @@ export default function Home() {
 
   const skeleton = <Skeleton className="w-full h-full" />;
 
-  const isQRLoading = isLoading || QRLoadingData;
+  const isQRLoading = isLoading;
 
   return (
     <div className="container w-full h-full mx-auto my-auto">
@@ -71,7 +71,7 @@ export default function Home() {
                 disabled={!prompt?.trim() || isLoading}
                 onClick={() => (request(prompt, selectedImage), setQrCodes([]))}
               >
-                {isLoading || QRLoadingData ? "Loading" : "Create QR"}
+                {isLoading ? "Loading" : "Create QR"}
               </Button>
             </div>
           </div>
