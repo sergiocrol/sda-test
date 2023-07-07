@@ -1,20 +1,42 @@
 import { QR, qrsRepo } from "@/lib/qrs-repo";
+import query from "@/lib/db";
 import { NextApiResponse, NextApiRequest } from "next/types";
 
-export default function requestHandler(
+export default async function requestHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const qrRepo = qrsRepo;
 
   if (req.method === "POST") {
-    const QRData: QR = req.body;
+    try {
+      const { id, output, prompt, init_image, control_image } = req.body as QR;
 
-    qrRepo.create(QRData);
-    res.status(200).json({ id: QRData.id });
+      const insertQuery = `
+      INSERT INTO qr_codes (id, output, prompt, init_image, control_image)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *
+    `;
+
+      const values = [id, output, prompt, init_image, control_image];
+
+      const result = await query(insertQuery, values);
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Something went wrong" });
+    }
   } else if (req.method === "GET") {
-    const listOfQR: QR[] = qrRepo.getAll();
+    try {
+      const selectQuery = `
+        SELECT * FROM qr_codes
+      `;
 
-    res.status(200).json({ qrs: listOfQR });
+      const result = await query(selectQuery);
+
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Something went wrong" });
+    }
   }
 }

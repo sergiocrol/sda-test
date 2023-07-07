@@ -11,17 +11,17 @@ export interface QR {
 
 export interface QRsRepo {
   getAll: () => QR[];
-  create: (qr: QR) => void;
+  addQr: (qr: QR) => void;
 }
 
 let qrs: QR[] = qrList;
 
 export const qrsRepo: QRsRepo = {
   getAll: () => qrs,
-  create,
+  addQr,
 };
 
-function create(qr: QR): void {
+function addQr(qr: QR): void {
   qr.id = qrs.length ? Math.max(...qrs.map((qr) => qr.id)) + 1 : 1;
 
   qrs.push(qr);

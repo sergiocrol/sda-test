@@ -106,7 +106,7 @@ export const handleProcessingResult = async (
   }
 };
 
-export const addQR = async (props: QR) => {
+export const addQR = async (props: Omit<QR, "id">) => {
   const ADD_QR_API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/qr`;
 
   const data = props;
@@ -124,6 +124,7 @@ export const addQR = async (props: QR) => {
 
     return response.data;
   } catch (error) {
-    throw new Error("Error generating Image.");
+    console.log(error);
+    throw new Error("Error adding the image.");
   }
 };

@@ -34,7 +34,6 @@ interface SDAReturnedValues {
 
 export const useSDA = (): SDAReturnedValues => {
   const [data, setData] = React.useState<undefined | string[]>(undefined);
-  const [error, setError] = React.useState(undefined);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
@@ -93,7 +92,6 @@ export const useSDA = (): SDAReturnedValues => {
         if (data?.status === "success") {
           setData(data?.output);
           addQR({
-            id: -1,
             output: data?.output,
             prompt: data?.meta?.prompt || "",
             init_image: image,
@@ -108,7 +106,6 @@ export const useSDA = (): SDAReturnedValues => {
               (dataProcessing) => {
                 setData(dataProcessing?.output);
                 addQR({
-                  id: -1,
                   output: dataProcessing?.output,
                   prompt: data?.meta?.prompt || "",
                   init_image: image,
@@ -118,8 +115,8 @@ export const useSDA = (): SDAReturnedValues => {
             );
           }
         } else {
-          throw new Error();
           setIsLoading(false);
+          throw new Error();
         }
       })
       .catch(() => (setIsError(true), setIsLoading(false)));

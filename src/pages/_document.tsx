@@ -2,9 +2,9 @@ import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
   return (
-    <Html className="h-screen bg-primary">
+    <Html className="bg-primary">
       <Head />
-      <body className="h-screen">
+      <body>
         <Main />
         <NextScript />
       </body>
