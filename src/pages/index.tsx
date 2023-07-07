@@ -162,6 +162,10 @@ export default function Home() {
         </CardContent>
         <CardFooter> </CardFooter>
       </Card>
+      <div className="absolute bottom-0 right-0 p-7 text-white mr-6">
+        done with &#129504; by{" "}
+        <span className="text-slate-300 font-semibold">S|C|R</span>
+      </div>
     </div>
   );
 }
