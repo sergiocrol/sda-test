@@ -29,7 +29,7 @@ export function InputFile({
 
   return (
     <div
-      className={`flex justify-between w-full max-w-sm items-center gap-1.5 ${className}`}
+      className={`flex justify-between w-full items-center gap-1.5 ${className}`}
     >
       <div className="w-3/5 cursor-pointer">
         <Label htmlFor="id" className=" cursor-pointer">

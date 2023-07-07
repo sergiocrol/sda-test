@@ -14,7 +14,7 @@ export function TextAreaWithLabel({
       <Textarea
         id="prompt"
         rows={8}
-        className="resize-none"
+        className="resize-none bg-white"
         placeholder="Panda in a forest"
         onChange={(e) => onChange(e.target.value)}
       />

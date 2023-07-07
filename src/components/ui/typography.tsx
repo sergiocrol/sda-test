@@ -14,6 +14,7 @@ export const TypographyH1 = ({
         WebkitTextFillColor: "transparent",
         display: "inline-block",
         fontSize: "3.5rem",
+        lineHeight: "3.5rem",
       }}
       className={`scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl ${className}`}
     >

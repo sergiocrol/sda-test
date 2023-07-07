@@ -20,7 +20,6 @@ import { useGenerateQR } from "@/hooks/useGenerateQR";
 import { QR } from "@/lib/qrs-repo";
 import { fetcher } from "@/lib/helpers";
 import Image from "next/image";
-import { ModeToggle } from "@/components/ui/modeToggle";
 import { TypographyH1 } from "@/components/ui/typography";
 
 export const FALLBACK_IMAGE = "placeholder.webp";
@@ -53,7 +52,7 @@ export default function Home() {
   return (
     <div className="container w-full h-full mx-auto my-auto">
       <TypographyH1 text="Stable Diffusion API" className="my-12" />
-      <Card>
+      <Card className="bg-muted">
         <CardHeader> </CardHeader>
         <CardContent className="flex flex-row justify-evenly">
           <div className="w-1/2 flex flex-col items-center gap-y-10">
