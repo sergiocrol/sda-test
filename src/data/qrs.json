@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "output": [
+      "https://cdn.stablediffusionapi.com/generations/0-e7111ac3-e392-4fe4-8a62-f8b451027647.png",
+      "https://cdn.stablediffusionapi.com/generations/1-e7111ac3-e392-4fe4-8a62-f8b451027647.png"
+    ],
+    "prompt": "New York city landscape in a beautiful sunset",
+    "init_image": "https://res.cloudinary.com/dfdamn9df/image/upload/v1688671372/j8q0qp9q0kt5ehyih6dk.png",
+    "control_image": "https://res.cloudinary.com/dfdamn9df/image/upload/v1688666767/qrcode-test_u8ok5o.png"
+  },
+  {
+    "id": 2,
+    "output": [
+      "https://cdn.stablediffusionapi.com/generations/0-c3a71485-26b2-43c5-a53a-c0e531c32af4.png",
+      "https://cdn.stablediffusionapi.com/generations/1-c3a71485-26b2-43c5-a53a-c0e531c32af4.png"
+    ],
+    "prompt": "Beautiful panda eating bamboo in a forest",
+    "init_image": "https://pub-8b49af329fae499aa563997f5d4068a4.r2.dev/generations/222c49d0-e5c4-4911-9b03-64bef4bd3748-0.png",
+    "control_image": "https://res.cloudinary.com/dfdamn9df/image/upload/v1688666767/qrcode-test_u8ok5o.png"
+  }
+]
