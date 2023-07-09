@@ -3,9 +3,9 @@ import axios, { AxiosResponse } from "axios";
 import {
   StableDiffusionQRApiRequest,
   StableDiffusionQRApiResponse,
-  StableDiffusionApiRequest,
-  StableDiffusionApiResponse,
+  StableDiffusionTextToImgApiRequest,
   StableDiffusionProcessingResponse,
+  StableDiffusionImgToImgApiRequest,
 } from "@/types/StableDiffusionApi";
 
 import { QR } from "./qrs-repo";
@@ -58,10 +58,34 @@ export const generateQRRequest = async (
   }
 };
 
-export const generateSDRequest = async (
-  props: StableDiffusionApiRequest
+export const generateSDtextToImgRequest = async (
+  props: StableDiffusionTextToImgApiRequest
 ): Promise<StableDiffusionQRApiResponse> => {
   const SDA_QR_API_URL = "https://stablediffusionapi.com/api/v3/text2img";
+
+  const data = props;
+
+  try {
+    const response: AxiosResponse<any> = await axios.post(
+      SDA_QR_API_URL,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error("Error generating Image.");
+  }
+};
+
+export const generateSDimgToImgRequest = async (
+  props: StableDiffusionImgToImgApiRequest
+): Promise<StableDiffusionQRApiResponse> => {
+  const SDA_QR_API_URL = "https://stablediffusionapi.com/api/v3/img2img";
 
   const data = props;
 
@@ -124,7 +148,6 @@ export const addQR = async (props: Omit<QR, "id">) => {
 
     return response.data;
   } catch (error) {
-    console.log(error);
     throw new Error("Error adding the image.");
   }
 };

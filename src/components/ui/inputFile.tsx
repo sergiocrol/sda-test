@@ -2,27 +2,41 @@ import React from "react";
 
 import { Card } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { FALLBACK_IMAGE } from "@/pages";
+
+interface InputFileProps {
+  id: string;
+  className: string;
+  title?: React.ReactElement | string;
+  subtitle?: React.ReactElement | string;
+  onSelectImage: (img: File | null) => void;
+  defaultImage?: string;
+  notRemovable?: boolean;
+  label?: string;
+}
+
+const getURLFromImage = (img?: File) =>
+  img ? URL.createObjectURL(img) : undefined;
 
 export function InputFile({
   id,
   className,
   onSelectImage,
+  defaultImage,
+  notRemovable,
+  title,
+  subtitle,
   label,
-}: {
-  id: string;
-  className: string;
-  onSelectImage: (img: File | null) => void;
-  label?: string;
-}) {
+}: InputFileProps) {
   const [isHovered, setIsHovered] = React.useState(false);
-  const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = React.useState<string | null>(
+    defaultImage || null
+  );
 
   const onHandleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const img = e.target.files && e.target.files[0];
     if (!img) return;
 
-    setPreviewUrl(URL.createObjectURL(img));
+    setPreviewUrl(getURLFromImage(img) as string);
     onSelectImage(img);
     e.target.value = "";
   };
@@ -54,11 +68,14 @@ export function InputFile({
               />
             </svg>
             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-              <span className="font-semibold">Click to upload image </span> or
-              drag and drop
+              {title || (
+                <span className="font-semibold">
+                  Click to upload your image
+                </span>
+              )}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              use square aspect ration for better results
+              {subtitle || <span>1:1 aspect ratio for a better results</span>}
             </p>
           </div>
           <input
@@ -72,9 +89,11 @@ export function InputFile({
           <Card
             className="w-32 h-32 cursor-pointer"
             style={{ minWidth: "8rem" }}
-            onClick={() => (setPreviewUrl(null), setIsHovered(false))}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onClick={() =>
+              !notRemovable && (setPreviewUrl(null), setIsHovered(false))
+            }
+            onMouseEnter={() => !notRemovable && setIsHovered(true)}
+            onMouseLeave={() => !notRemovable && setIsHovered(false)}
           >
             <Avatar className="w-full h-full rounded-sm">
               {isHovered && (
@@ -82,7 +101,7 @@ export function InputFile({
                   &#x2715;
                 </div>
               )}
-              <AvatarImage src={previewUrl || FALLBACK_IMAGE} />
+              <AvatarImage src={previewUrl} />
               <AvatarFallback>QR</AvatarFallback>
             </Avatar>
           </Card>

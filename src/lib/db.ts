@@ -1,11 +1,34 @@
-import { db, QueryResult, QueryResultRow } from "@vercel/postgres";
+import {
+  db,
+  QueryResult,
+  QueryResultRow,
+  VercelPoolClient,
+} from "@vercel/postgres";
+import { Pool } from "pg";
 
 export default async function requestHandler<T extends QueryResultRow>(
   query: string,
   params?: any[]
 ): Promise<T[]> {
   try {
-    const client = await db.connect();
+    let client;
+    let localConnection;
+
+    if (!client) {
+      if (process.env.ENV === "development") {
+        client = new Pool({
+          user: "postgres",
+          password: "D0stoievski1821",
+          host: "0.0.0.0",
+          port: 5432,
+          database: "qr_codes",
+        });
+
+        localConnection = client.connect();
+      } else {
+        client = await db.connect();
+      }
+    }
 
     const tableExistsQuery = `
         SELECT EXISTS (
@@ -33,7 +56,9 @@ export default async function requestHandler<T extends QueryResultRow>(
     }
 
     const result: QueryResult<T> = await client.query(query, params);
-    client.release();
+    process.env.ENV === "development"
+      ? (await localConnection)?.release()
+      : (client as VercelPoolClient).release();
     return result.rows;
   } catch (err) {
     throw new Error(`Error executing query: ${err}`);

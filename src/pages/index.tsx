@@ -1,19 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
-import useSwr from "swr";
-import Image from "next/image";
+import useSwr, { useSWRConfig } from "swr";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { InputFile } from "@/components/ui/inputFile";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TextAreaWithLabel } from "@/components/ui/textAreaWithLabel";
 
 import { useGenerateQR } from "@/hooks/useGenerateQR";
@@ -22,28 +19,47 @@ import { QR } from "@/lib/qrs-repo";
 import { fetcher } from "@/lib/helpers";
 import { TypographyH1, TypographyH3 } from "@/components/ui/typography";
 import { QRCard } from "@/components/qrCard";
-
-export const FALLBACK_IMAGE = "placeholder.svg";
+import { Toaster } from "@/components/ui/toaster";
+import { QRCode } from "@/components/qrCode";
+import { Footer } from "@/components/footer";
+import { NUMBER_OF_GENERATED_QR, QR_CODE_URL } from "@/hooks/useSDA";
+import {
+  initialVariables,
+  InitialVariablesMenu,
+  MenuAttributes,
+} from "@/components/menuAttributes";
 
 export default function Home() {
-  const homePage = React.useRef(null);
-  const {
-    data: QRData,
-    error,
-    isLoading: QRLoadingData,
-  } = useSwr<QR[]>("/api/qr", fetcher);
-  const { request, data, isLoading } = useGenerateQR();
+  const { data: QRData, isLoading: QRLoadingData } = useSwr<QR[]>(
+    "/api/qr",
+    fetcher
+  );
+  const { mutate } = useSWRConfig();
 
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
+  const homePage = React.useRef(null);
+  const { request, data, setData, isLoading } = useGenerateQR();
+
+  // TODO: Gestionar la subida de un QR
+  const [selectedControlImage, setSelectedControlImage] =
+    React.useState<File | null>(null);
+  const [selectedInitialImage, setSelectedInitialImage] =
+    React.useState<File | null>(null);
   const [prompt, setPrompt] = React.useState<string | null>(null);
+  const [variables, setVariables] =
+    React.useState<InitialVariablesMenu>(initialVariables);
 
   const [qrCodes, setQrCodes] = React.useState<string[]>([]);
-  const [selectedQRCode, setSelectedQRCode] = React.useState(FALLBACK_IMAGE);
+
+  const handleQrGenerationRequest = () => {
+    setQrCodes([]);
+    setData(undefined);
+    request(prompt, selectedInitialImage, variables);
+  };
 
   React.useEffect(() => {
     if (data?.length && !qrCodes.length) {
       setQrCodes(data);
-      setSelectedQRCode(data[0]);
+      mutate("/api/qr");
     }
   }, [data, qrCodes]);
 
@@ -53,126 +69,74 @@ export default function Home() {
       <Card className="bg-muted">
         <CardHeader> </CardHeader>
         <CardContent className="flex flex-row justify-evenly">
-          <div className="w-1/2 flex flex-col items-center gap-y-10">
-            <InputFile
-              id="input-file"
-              className="dropzone w-full max-w-md"
-              onSelectImage={setSelectedImage}
-              label="Initial image"
-            />
-            <div className="dropzone w-full max-w-md">
-              <TextAreaWithLabel onChange={setPrompt} label="Prompt" />
+          <div className="w-3/5 flex flex-col items-center gap-y-10 mr-4">
+            <div className="w-full flex justify-between gap-x-10">
+              <InputFile
+                title={
+                  <span className="font-semibold">
+                    Click to upload your QR code
+                  </span>
+                }
+                id="input-qr"
+                notRemovable
+                subtitle=" "
+                className="dropzone w-full max-w-md"
+                onSelectImage={setSelectedControlImage}
+                defaultImage={QR_CODE_URL}
+                label="Control image*"
+              />
+
+              <InputFile
+                id="input-file"
+                className="dropzone w-full max-w-md"
+                onSelectImage={setSelectedInitialImage}
+                label="Initial image"
+              />
+            </div>
+            <div className="w-full flex justify-between gap-x-10">
+              <TextAreaWithLabel
+                className="w-1/2"
+                onChange={setPrompt}
+                label="Prompt*"
+                placeholder="A cubism painting of a town with a lot of houses in the snow, sky background, matte painting concept art, detailed painting"
+              />
+              <MenuAttributes
+                className="w-1/2"
+                label="Advanced options"
+                onChange={setVariables}
+              />
             </div>
             <div className="w-full max-w-md flex justify-center">
               <Button
                 variant={"default"}
-                className="w-full h-14 text-lg"
+                className="w-full h-14 text-lg mt-5"
                 disabled={!prompt?.trim() || isLoading}
-                onClick={() => (request(prompt, selectedImage), setQrCodes([]))}
+                onClick={handleQrGenerationRequest}
               >
                 {isLoading ? "Loading" : "Generate AI QR"}
               </Button>
             </div>
           </div>
           <Separator orientation="vertical" className="h-auto bg-slate-300" />
-          <div className="w-1/2 flex flex-col items-center gap-y-10 justify-center">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Card className="w-56 h-56 cursor-pointer shadow-md relative">
-                  {isLoading && (
-                    <Skeleton className="w-full h-full opacity-60 absolute z-10" />
-                  )}
-                  <Avatar className="w-full h-full rounded-none">
-                    <AvatarImage
-                      className="p-2"
-                      src={qrCodes.length > 0 ? qrCodes[0] : FALLBACK_IMAGE}
-                    />
-                    <AvatarFallback>QR</AvatarFallback>
-                  </Avatar>
-                </Card>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] m-12">
-                <Image
-                  width={350}
-                  height={350}
-                  src={qrCodes.length > 0 ? qrCodes[0] : "/" + FALLBACK_IMAGE}
-                  alt={qrCodes.length > 0 ? qrCodes[0] : "/" + FALLBACK_IMAGE}
-                />
-              </DialogContent>
-            </Dialog>
-            <div className="flex gap-x-5">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Card className="cursor-pointer shadow-md relative">
-                    {isLoading && (
-                      <Skeleton className="w-full h-full opacity-60 absolute z-10" />
-                    )}
-                    <Avatar className="w-24 h-24 rounded-none">
-                      <AvatarImage
-                        className="p-2"
-                        src={qrCodes.length > 0 ? qrCodes[1] : FALLBACK_IMAGE}
-                      />
-                      <AvatarFallback>QR</AvatarFallback>
-                    </Avatar>
-                  </Card>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] m-12">
-                  <Image
-                    width={350}
-                    height={350}
-                    src={qrCodes.length > 0 ? qrCodes[1] : "/" + FALLBACK_IMAGE}
-                    alt={qrCodes.length > 0 ? qrCodes[1] : "/" + FALLBACK_IMAGE}
+          <div className="w-1/4 max-w-md flex flex-col items-center gap-y-10 justify-center">
+            <QRCode
+              id={0}
+              qrCodes={[...qrCodes]}
+              size="medium"
+              isLoading={isLoading}
+            />
+            <div className="flex gap-x-4">
+              {[...Array(NUMBER_OF_GENERATED_QR - 1).keys()].map((n) => {
+                return (
+                  <QRCode
+                    key={n + 1}
+                    id={n + 1}
+                    qrCodes={[...qrCodes]}
+                    size="small"
+                    isLoading={isLoading}
                   />
-                </DialogContent>
-              </Dialog>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Card className="cursor-pointer shadow-md relative">
-                    {isLoading && (
-                      <Skeleton className="w-full h-full opacity-60 absolute z-10" />
-                    )}
-                    <Avatar className="w-24 h-24 rounded-none">
-                      <AvatarImage
-                        className="p-2"
-                        src={qrCodes.length > 0 ? qrCodes[2] : FALLBACK_IMAGE}
-                      />
-                      <AvatarFallback>QR</AvatarFallback>
-                    </Avatar>
-                  </Card>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] m-12">
-                  <Image
-                    width={350}
-                    height={350}
-                    src={qrCodes.length > 0 ? qrCodes[2] : "/" + FALLBACK_IMAGE}
-                    alt={qrCodes.length > 0 ? qrCodes[2] : "/" + FALLBACK_IMAGE}
-                  />
-                </DialogContent>
-              </Dialog>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Card className="cursor-pointer shadow-md relative">
-                    {isLoading && (
-                      <Skeleton className="w-full h-full opacity-60 absolute z-10" />
-                    )}
-                    <Avatar className="w-24 h-24 rounded-none">
-                      <AvatarImage
-                        className="p-2"
-                        src={qrCodes.length > 0 ? qrCodes[3] : FALLBACK_IMAGE}
-                      />
-                      <AvatarFallback>QR</AvatarFallback>
-                    </Avatar>
-                  </Card>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px] m-12">
-                  <Image
-                    width={350}
-                    height={350}
-                    src={qrCodes.length > 0 ? qrCodes[3] : "/" + FALLBACK_IMAGE}
-                    alt={qrCodes.length > 0 ? qrCodes[3] : "/" + FALLBACK_IMAGE}
-                  />
-                </DialogContent>
-              </Dialog>
+                );
+              })}
             </div>
           </div>
         </CardContent>
@@ -198,10 +162,8 @@ export default function Home() {
           })}
         </React.Fragment>
       )}
-      <div className="mt-20 mb-5 text-right text-white mr-6">
-        done with &#129504; by{" "}
-        <span className="text-slate-300 font-semibold">S|C|R</span>
-      </div>
+      <Footer />
+      <Toaster />
     </div>
   );
 }

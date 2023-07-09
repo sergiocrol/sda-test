@@ -33,7 +33,10 @@ export const QRCard = (props: IQRCard) => {
     <div>
       <Card className={`flex p-2 ${className}`}>
         <Dialog>
-          <DialogTrigger className="cursor-pointer">
+          <DialogTrigger
+            className="cursor-pointer w-40"
+            style={{ minWidth: "10rem" }}
+          >
             <Image
               className="m-2"
               width={150}

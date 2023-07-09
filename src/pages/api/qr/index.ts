@@ -10,15 +10,15 @@ export default async function requestHandler(
 
   if (req.method === "POST") {
     try {
-      const { id, output, prompt, init_image, control_image } = req.body as QR;
+      const { output, prompt, init_image, control_image } = req.body as QR;
 
       const insertQuery = `
-      INSERT INTO qr_codes (id, output, prompt, init_image, control_image)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO qr_codes (output, prompt, init_image, control_image)
+      VALUES ($1, $2, $3, $4)
       RETURNING *
     `;
 
-      const values = [id, output, prompt, init_image, control_image];
+      const values = [output, prompt, init_image, control_image];
 
       const result = await query(insertQuery, values);
 
