@@ -94,7 +94,7 @@ export const QRCard = (props: IQRCard) => {
           </div>
           <Separator orientation="vertical" className="mx-4" />
           <div className="flex flex-col w-2/3 gap-y-2">
-            <div className="flex gap-x-4 mb-1">
+            <div className="flex gap-x-4 mb-1 mt-3">
               <div className="flex flex-col gap-y-1 w-1/2">
                 <span className="font-bold text-sm">Control image</span>
                 <a

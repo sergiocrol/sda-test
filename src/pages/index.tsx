@@ -174,11 +174,11 @@ export default function Home() {
       <React.Fragment>
         <TypographyH3 text="Generated QR Codes" className="my-5" />
         <Separator orientation="horizontal" className="mb-5 mt-3" />
-        {true ? (
+        {QRLoadingData ? (
           <div className="flex flex-col gap-y-5">
-            <Skeleton style={{ height: 150 }} />
-            <Skeleton style={{ height: 150 }} />
-            <Skeleton style={{ height: 150 }} />
+            <Skeleton style={{ height: 184 }} />
+            <Skeleton style={{ height: 184 }} />
+            <Skeleton style={{ height: 184 }} />
           </div>
         ) : (
           QRData?.length &&
