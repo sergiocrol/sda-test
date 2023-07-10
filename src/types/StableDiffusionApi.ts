@@ -1,5 +1,38 @@
 interface MetaResponse {
   prompt: string;
+  H: number;
+  W: number;
+  auto_hint: string;
+  base64: string;
+  clip_skip: number;
+  control_image: string;
+  controlnet_conditioning_scale: number;
+  controlnet_model: string;
+  controlnet_type: string;
+  embeddings: string | null;
+  file_prefix: string;
+  full_url: string;
+  guess_mode: string;
+  guidance_scale: number;
+  enhance_prompt?: string;
+  init_image: string;
+  lora: string | null;
+  lora_strength: number;
+  mask_image: string | null;
+  model_id: string;
+  multi_lingual: string;
+  n_samples: number;
+  negative_prompt: string;
+  safety_checker: string;
+  scheduler: string | null;
+  seed: number;
+  steps: number;
+  strength: number;
+  temp: string;
+  tomesd: string;
+  upscale: string;
+  use_karras_sigmas: string;
+  vae: string | null;
 }
 
 export const controlnetTypeIds = [
@@ -46,42 +79,44 @@ export type Scheduler = (typeof schedulers)[number];
 export const models = ["midjourney", "ghostmix", "sd-1.5"] as const;
 export type ModelID = (typeof models)[number];
 
+export type BooleanString = "yes" | "no";
+
 export interface StableDiffusionQRApiRequest {
   key: string;
   model_id: ModelID;
   controlnet_type: ControlNetType;
   controlnet_model: ControlNetType;
-  auto_hint: "yes" | "no";
-  guess_mode: "yes" | "no";
+  auto_hint: BooleanString;
+  guess_mode: BooleanString;
   prompt: string;
   negative_prompt: string;
   init_image: string;
   control_image: string;
-  mask_image?: string;
+  mask_image?: string | null;
   width: number;
   height: number;
   samples: number;
   scheduler?: Scheduler | null;
-  tomesd?: "yes" | "no";
-  use_karras_sigmas?: "yes" | "no";
-  vae?: string;
-  lora_strength?: number;
-  lora_model?: string;
+  tomesd?: BooleanString;
+  use_karras_sigmas?: BooleanString;
+  vae?: string | null;
+  lora_strength?: number | null;
+  lora_model?: string | null;
   num_inference_steps: number;
-  safety_checker: "yes" | "no";
-  embeddings_model?: string;
-  enhance_prompt: "yes" | "no";
-  multi_lingual?: "yes" | "no";
+  safety_checker: BooleanString;
+  embeddings_model?: string | null;
+  enhance_prompt: BooleanString;
+  multi_lingual?: BooleanString;
   guidance_scale: number;
   controlnet_conditioning_scale: number;
   strength: number;
-  seed?: number;
+  seed?: number | null;
   webhook?: string;
   track_id?: string;
-  upscale?: "yes" | "no";
+  upscale?: BooleanString;
   clip_skip?: number;
-  base64?: "yes" | "no";
-  temp?: "yes" | "no";
+  base64?: BooleanString;
+  temp?: BooleanString;
 }
 
 export interface StableDiffusionQRApiResponse {
@@ -102,14 +137,14 @@ export interface StableDiffusionTextToImgApiRequest {
   height: number;
   samples: number;
   num_inference_steps: number;
-  safety_checker: "yes" | "no";
-  enhance_prompt: "yes" | "no";
+  safety_checker: BooleanString;
+  enhance_prompt: BooleanString;
   seed: null;
   guidance_scale: number;
-  multi_lingual?: "yes" | "no";
-  panorama?: "yes" | "no";
-  self_attention?: "yes" | "no";
-  upscale?: "yes" | "no";
+  multi_lingual?: BooleanString;
+  panorama?: BooleanString;
+  self_attention?: BooleanString;
+  upscale?: BooleanString;
   embeddings_model?: string;
   webhook?: string;
   track_id?: string;
@@ -124,8 +159,8 @@ export interface StableDiffusionImgToImgApiRequest {
   height: number;
   samples: number;
   num_inference_steps: number;
-  safety_checker: "yes" | "no";
-  enhance_prompt: "yes" | "no";
+  safety_checker: BooleanString;
+  enhance_prompt: BooleanString;
   seed: null;
   guidance_scale: number;
   strength: number;

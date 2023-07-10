@@ -15,10 +15,10 @@ import { TextAreaWithLabel } from "@/components/ui/textAreaWithLabel";
 
 import { useGenerateQR } from "@/hooks/useGenerateQR";
 
-import { QR } from "@/lib/qrs-repo";
+import { QR } from "@/types/qr";
 import { fetcher } from "@/lib/helpers";
 import { TypographyH1, TypographyH3 } from "@/components/ui/typography";
-import { QRCard } from "@/components/qrCard";
+import { QRCard, SettingVariables } from "@/components/qrCard";
 import { Toaster } from "@/components/ui/toaster";
 import { QRCode } from "@/components/qrCode";
 import { Footer } from "@/components/footer";
@@ -28,6 +28,7 @@ import {
   InitialVariablesMenu,
   MenuAttributes,
 } from "@/components/menuAttributes";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const { data: QRData, isLoading: QRLoadingData } = useSwr<QR[]>(
@@ -54,6 +55,34 @@ export default function Home() {
     setQrCodes([]);
     setData(undefined);
     request(prompt, selectedInitialImage, variables);
+  };
+
+  const getSettingVariables = (qr: QR): SettingVariables => {
+    const {
+      controlnet_model,
+      controlnet_type,
+      model_id,
+      width,
+      height,
+      controlnet_conditioning_scale,
+      scheduler,
+      num_inference_steps,
+      guidance_scale,
+      strength,
+    } = qr;
+
+    return {
+      controlnet_model,
+      controlnet_type,
+      model_id,
+      width,
+      height,
+      controlnet_conditioning_scale: controlnet_conditioning_scale.toString(),
+      scheduler,
+      num_inference_steps,
+      guidance_scale,
+      strength,
+    };
   };
 
   React.useEffect(() => {
@@ -131,7 +160,7 @@ export default function Home() {
                   <QRCode
                     key={n + 1}
                     id={n + 1}
-                    qrCodes={[...qrCodes]}
+                    qrCodes={qrCodes}
                     size="small"
                     isLoading={isLoading}
                   />
@@ -142,11 +171,18 @@ export default function Home() {
         </CardContent>
         <CardFooter> </CardFooter>
       </Card>
-      {QRData?.length && (
-        <React.Fragment>
-          <TypographyH3 text="Generated QR Codes" className="my-5" />
-          <Separator orientation="horizontal" className="mb-5 mt-3" />
-          {QRData?.map((qr) => {
+      <React.Fragment>
+        <TypographyH3 text="Generated QR Codes" className="my-5" />
+        <Separator orientation="horizontal" className="mb-5 mt-3" />
+        {true ? (
+          <div className="flex flex-col gap-y-5">
+            <Skeleton style={{ height: 150 }} />
+            <Skeleton style={{ height: 150 }} />
+            <Skeleton style={{ height: 150 }} />
+          </div>
+        ) : (
+          QRData?.length &&
+          QRData?.map((qr) => {
             return (
               <QRCard
                 parentRef={homePage}
@@ -156,12 +192,13 @@ export default function Home() {
                 prompt={qr.prompt}
                 controlImage={qr.control_image}
                 initImage={qr.init_image}
+                settingVariables={getSettingVariables(qr)}
                 className="my-5"
               />
             );
-          })}
-        </React.Fragment>
-      )}
+          })
+        )}
+      </React.Fragment>
       <Footer />
       <Toaster />
     </div>

@@ -17,11 +17,11 @@ export default async function requestHandler<T extends QueryResultRow>(
     if (!client) {
       if (process.env.ENV === "development") {
         client = new Pool({
-          user: "postgres",
-          password: "D0stoievski1821",
-          host: "0.0.0.0",
-          port: 5432,
-          database: "qr_codes",
+          user: process.env.POSTGRES_LOCAL_USER,
+          password: process.env.POSTGRES_LOCAL_PASSWORD,
+          host: process.env.POSTGRES_LOCAL_HOST,
+          port: process.env.POSTGRES_LOCAL_PORT as unknown as number,
+          database: process.env.POSTGRES_LOCAL_DB,
         });
 
         localConnection = client.connect();
@@ -49,10 +49,43 @@ export default async function requestHandler<T extends QueryResultRow>(
           output TEXT[],
           prompt TEXT,
           init_image TEXT,
-          control_image TEXT
+          control_image TEXT,
+          negative_prompt TEXT,
+          controlnet_model TEXT,
+          controlnet_type TEXT,
+          model_id TEXT,
+          auto_hint TEXT,
+          guess_mode TEXT,
+          width SMALLINT,
+          height SMALLINT,
+          controlnet_conditioning_scale NUMERIC,
+          samples SMALLINT,
+          scheduler TEXT NULL,
+          num_inference_steps SMALLINT,
+          safety_checker TEXT,
+          base64 TEXT,
+          enhance_prompt TEXT,
+          guidance_scale NUMERIC,
+          strength NUMERIC,
+          use_karras_sigmas TEXT,
+          mask_image TEXT,
+          tomesd TEXT,
+          vae TEXT NULL,
+          lora_strength NUMERIC NULL,
+          lora_model TEXT NULL,
+          embeddings_model TEXT NULL,
+          multi_lingual TEXT,
+          seed BIGINT NULL,
+          upscale TEXT,
+          clip_skip SMALLINT,
+          temp TEXT
         )
       `;
-      await client.query(createTableQuery);
+      try {
+        await client.query(createTableQuery);
+      } catch (error) {
+        console.log({ error });
+      }
     }
 
     const result: QueryResult<T> = await client.query(query, params);
@@ -61,6 +94,7 @@ export default async function requestHandler<T extends QueryResultRow>(
       : (client as VercelPoolClient).release();
     return result.rows;
   } catch (err) {
+    console.log({ err });
     throw new Error(`Error executing query: ${err}`);
   }
 }

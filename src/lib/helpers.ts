@@ -8,9 +8,12 @@ import {
   StableDiffusionImgToImgApiRequest,
 } from "@/types/StableDiffusionApi";
 
-import { QR } from "./qrs-repo";
+import { QR } from "../types/qr";
 
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const fetcher = (url: string) =>
+  fetch(url)
+    .then((res) => res.json())
+    .catch((e) => console.log(e));
 
 export const uploadImage = async (
   url: string,
@@ -130,7 +133,7 @@ export const handleProcessingResult = async (
   }
 };
 
-export const addQR = async (props: Omit<QR, "id">) => {
+export const addQR = async (props: Omit<QR, "id" | "key">) => {
   const ADD_QR_API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/qr`;
 
   const data = props;
