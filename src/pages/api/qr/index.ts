@@ -163,7 +163,7 @@ export default async function requestHandler(
   } else if (req.method === "GET") {
     try {
       const selectQuery = `
-        SELECT id, output, prompt, init_image, control_image, controlnet_model, controlnet_type, model_id, width, height, controlnet_conditioning_scale, scheduler, num_inference_steps, guidance_scale, strength FROM qr_codes
+        SELECT id, output, prompt, init_image, control_image, controlnet_model, controlnet_type, model_id, width, height, controlnet_conditioning_scale, scheduler, num_inference_steps, guidance_scale, strength FROM qr_codes ORDER BY id DESC
       `;
 
       const result = await query(selectQuery);
