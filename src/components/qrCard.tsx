@@ -144,12 +144,6 @@ export const QRCard = (props: IQRCard) => {
                   href={controlImage}
                   target="_blank"
                   className="overflow-clip text-xs text-sky-600"
-                  style={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    maxWidth: 360,
-                  }}
                 >
                   {controlImage}
                 </a>
@@ -160,12 +154,6 @@ export const QRCard = (props: IQRCard) => {
                   href={initImage}
                   target="_blank"
                   className="overflow-clip text-xs text-sky-600"
-                  style={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    maxWidth: 360,
-                  }}
                 >
                   {initImage}
                 </a>
