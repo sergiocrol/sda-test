@@ -57,6 +57,9 @@ export const QRCard = (props: IQRCard) => {
     },
   } = props;
 
+  const outputIndexes = output.map((url, idx) => ({ id: idx, url }));
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
   return (
     <div>
       <Card className={`flex p-2 ${className}`}>
@@ -75,14 +78,54 @@ export const QRCard = (props: IQRCard) => {
           </DialogTrigger>
           <DialogPortal>
             <DialogOverlay className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
-              <DialogContent className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full sm:max-w-[425px] m-12">
-                <Image
-                  className="m-2"
-                  width={350}
-                  height={350}
-                  src={output[0]}
-                  alt={id.toString()}
-                />
+              <DialogContent className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full sm:max-w-[550px] m-12">
+                <div className="flex flex-col items-center">
+                  <Image
+                    className="m-2 rounded-md mb-10"
+                    width={350}
+                    height={350}
+                    src={outputIndexes[selectedIndex].url}
+                    alt={id.toString()}
+                  />
+                  <div className="flex">
+                    <Image
+                      className={`m-2 rounded-md cursor-pointer ${
+                        selectedIndex === 0
+                          ? "border-solid border-4 border-blue-500"
+                          : ""
+                      }`}
+                      width={150}
+                      height={150}
+                      src={outputIndexes[0].url}
+                      alt={id.toString()}
+                      onClick={() => setSelectedIndex(0)}
+                    />
+                    <Image
+                      className={`m-2 rounded-md cursor-pointer ${
+                        selectedIndex === 1
+                          ? "border-solid border-4 border-blue-500"
+                          : ""
+                      }`}
+                      width={150}
+                      height={150}
+                      src={outputIndexes[1].url}
+                      alt={id.toString()}
+                      onClick={() => setSelectedIndex(1)}
+                    />
+                    <Image
+                      className={`m-2 rounded-md cursor-pointer ${
+                        selectedIndex === 2
+                          ? "border-solid border-4 border-blue-500"
+                          : ""
+                      }`}
+                      width={150}
+                      height={150}
+                      src={outputIndexes[2].url}
+                      alt={id.toString()}
+                      onClick={() => setSelectedIndex(2)}
+                    />
+                  </div>
+                </div>
               </DialogContent>
             </DialogOverlay>
           </DialogPortal>
