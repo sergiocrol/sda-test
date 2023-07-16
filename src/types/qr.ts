@@ -1,4 +1,7 @@
-import { StableDiffusionQRApiRequest } from "./StableDiffusionApi";
+import {
+  StableDiffusionQRApiRequest,
+  StableDiffusionQRApiResponse,
+} from "./StableDiffusionApi";
 
 export interface QR extends StableDiffusionQRApiRequest {
   id: number;
@@ -6,4 +9,10 @@ export interface QR extends StableDiffusionQRApiRequest {
   prompt: string;
   init_image: string;
   control_image: string;
+}
+
+export interface SuccessQrResponse {
+  status: "success";
+  data: StableDiffusionQRApiResponse;
+  image: string;
 }

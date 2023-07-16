@@ -2,6 +2,7 @@ import React from "react";
 
 import { Card } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
+import { InfoTooltip, TooltipProps } from "./tooltipWithContent";
 
 interface InputFileProps {
   id: string;
@@ -12,6 +13,8 @@ interface InputFileProps {
   defaultImage?: string;
   notRemovable?: boolean;
   label?: string;
+  disabled?: boolean;
+  tooltip?: TooltipProps;
 }
 
 const getURLFromImage = (img?: File) =>
@@ -26,6 +29,8 @@ export function InputFile({
   title,
   subtitle,
   label,
+  disabled,
+  tooltip,
 }: InputFileProps) {
   const [isHovered, setIsHovered] = React.useState(false);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(
@@ -45,11 +50,15 @@ export function InputFile({
     <div
       className={`flex-col items-center justify-between w-full ${className}`}
     >
-      {label}
+      {label} {tooltip && <InfoTooltip content={tooltip.content} />}
       <div className="flex gap-x-3">
         <label
           htmlFor={id}
-          className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          className={`flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg ${
+            disabled ? "cursor-not-allowed" : "cursor-pointer"
+          } bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 ${
+            disabled ? "opacity-50" : ""
+          }`}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             <svg
@@ -81,7 +90,8 @@ export function InputFile({
           <input
             id={id}
             type="file"
-            className="hidden"
+            className={`hidden ${disabled ? "cursor-not-allowed" : ""}`}
+            disabled={disabled}
             onChange={(e) => onHandleImage(e)}
           />
         </label>

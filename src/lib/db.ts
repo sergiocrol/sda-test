@@ -89,6 +89,7 @@ export default async function requestHandler<T extends QueryResultRow>(
     }
 
     const result: QueryResult<T> = await client.query(query, params);
+
     process.env.ENV === "development"
       ? (await localConnection)?.release()
       : (client as VercelPoolClient).release();
