@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import useSwr, { useSWRConfig } from "swr";
@@ -22,13 +23,13 @@ import { QRCard, SettingVariables } from "@/components/qrCard";
 import { Toaster } from "@/components/ui/toaster";
 import { QRCode } from "@/components/qrCode";
 import { Footer } from "@/components/footer";
-import { NUMBER_OF_GENERATED_QR, QR_CODE_URL } from "@/hooks/useSDA";
 import {
   initialVariables,
   InitialVariablesMenu,
   MenuAttributes,
 } from "@/components/menuAttributes";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NUMBER_OF_GENERATED_QR, QR_CODE_URL } from "@/constants/api";
 
 export default function Home() {
   const { data: QRData, isLoading: QRLoadingData } = useSwr<QR[]>(
@@ -109,10 +110,20 @@ export default function Home() {
                 id="input-qr"
                 notRemovable
                 subtitle=" "
+                disabled
                 className="dropzone w-full max-w-md"
                 onSelectImage={setSelectedControlImage}
                 defaultImage={QR_CODE_URL}
                 label="Control image*"
+                tooltip={{
+                  content: (
+                    <div className="text-center">
+                      The user's QR. For testing purposes we use a default QR{" "}
+                      <br />
+                      code with a real url format.
+                    </div>
+                  ),
+                }}
               />
 
               <InputFile
@@ -120,6 +131,15 @@ export default function Home() {
                 className="dropzone w-full max-w-md"
                 onSelectImage={setSelectedInitialImage}
                 label="Initial image"
+                tooltip={{
+                  content: (
+                    <div className="text-center">
+                      <span className="font-bold">Optional. </span> Required by
+                      ControlNet, but we handle the <br /> image's generation
+                      with the prompt through the SD Api
+                    </div>
+                  ),
+                }}
               />
             </div>
             <div className="w-full flex justify-between gap-x-10">

@@ -1,3 +1,5 @@
+import { InitialVariablesMenu } from "@/components/menuAttributes";
+
 interface MetaResponse {
   prompt: string;
   H: number;
@@ -127,6 +129,7 @@ export interface StableDiffusionQRApiResponse {
   fetch_result?: string;
   status: "success" | "error" | "processing" | "failed";
   message?: string;
+  messege?: string;
 }
 
 export interface StableDiffusionTextToImgApiRequest {
@@ -183,4 +186,36 @@ export interface StableDiffusionProcessingResponse {
   output: string[];
   status: "success" | "error" | "processing" | "failed";
   message?: string;
+}
+
+export interface SDARequestProps {
+  image?: string;
+  controlImage?: string;
+  prompt: string;
+  variables: InitialVariablesMenu;
+}
+
+export interface SDAReturnedValues {
+  request: (requestProps: SDARequestProps) => void;
+  qrData: undefined | string[];
+  setQrData: (qrData: undefined | string[]) => void;
+  isLoading: boolean;
+  isError: boolean;
+}
+
+export interface SDAVariableParameters {
+  prompt: string;
+  initImage: string;
+  controlImage: string;
+  width: number;
+  height: number;
+  samples: number;
+  controlModel: ControlNetType;
+  controlType: ControlNetType;
+  modelID: ModelID;
+  strength: number;
+  numInferenceSteps: number;
+  guidanceScale: number;
+  scheduler?: Scheduler | null;
+  use_karras_sigmas?: BooleanString;
 }
