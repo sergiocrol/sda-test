@@ -25,7 +25,7 @@ export const useSDA = (): SDAReturnedValues => {
             ? showApiErrorToast(toast)
             : showGenericToast(toast, "Something went wrong", data.message);
         } else {
-          setData(data?.output || data?.data.output);
+          setData(data?.output || data?.data?.output);
         }
         setIsLoading(false);
       })

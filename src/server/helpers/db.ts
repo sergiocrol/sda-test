@@ -50,7 +50,7 @@ export const addQrToDB = async (
     } = qrCodeSucess.meta!;
 
     const result: QR = await addQR({
-      output: qrCodeProcessing?.output || qrCodeSucess.output,
+      output: qrCodeProcessing?.output || qrCodeSucess?.output,
       prompt: prompt || "",
       init_image: image,
       control_image: QR_CODE_URL,

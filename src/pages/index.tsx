@@ -208,7 +208,7 @@ export default function Home() {
                 parentRef={homePage}
                 key={qr.id}
                 id={qr.id}
-                output={qr.output}
+                output={qr?.output}
                 prompt={qr.prompt}
                 controlImage={qr.control_image}
                 initImage={qr.init_image}
