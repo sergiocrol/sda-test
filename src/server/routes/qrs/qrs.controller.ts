@@ -76,7 +76,7 @@ export const httpGenerateQr = catchAsyncErrors(
     if (result?.status === "success") {
       const response = result as SuccessQrResponse;
 
-      await addQrToDB(response.data, image || response.image);
+      // await addQrToDB(response.data, image || response.image);
       res.status(200).json(response);
     } else {
       res.status(500).json(result);
