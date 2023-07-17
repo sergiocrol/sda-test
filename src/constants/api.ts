@@ -5,6 +5,7 @@ export const API_KEY = process.env
   .NEXT_PUBLIC_STABLE_DIFFUSION_API_KEY as string;
 export const NUMBER_OF_GENERATED_IMAGE = 1;
 export const NUMBER_OF_GENERATED_QR = 3;
+export const TIME_TO_REQUEST = 2000;
 export const WEBHOOK_URL = process.env.NEXT_PUBLIC_STABLE_DIFFUSION_WEBHOOK;
 export const QR_CODE_URL =
   "https://res.cloudinary.com/dfdamn9df/image/upload/v1688666767/qrcode-test_u8ok5o.png";

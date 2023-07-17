@@ -23,6 +23,7 @@ import {
   GENERATING_QR_ERROR_MAX_ERRORS,
   NUMBER_OF_GENERATED_IMAGE,
   QR_CODE_URL,
+  TIME_TO_REQUEST,
   WEBHOOK_URL,
 } from "@/constants/api";
 import {
@@ -123,7 +124,7 @@ const generateQrWithoutImage = async (
     return response;
   } else if (sdaResponse.status === "processing" && sdaResponse.fetch_result) {
     const response = await handleRequestWithTimeout(
-      5000,
+      TIME_TO_REQUEST,
       sdaResponse.fetch_result
     );
     if (response.status === "error") {
@@ -164,7 +165,7 @@ const generateQrWithImage = async (
     return response;
   } else if (sdaResponse?.status === "processing" && sdaResponse.fetch_result) {
     const response = await handleRequestWithTimeout(
-      5000,
+      TIME_TO_REQUEST,
       sdaResponse.fetch_result
     );
     return response;
