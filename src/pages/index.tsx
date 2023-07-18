@@ -16,10 +16,10 @@ import { TextAreaWithLabel } from "@/components/ui/textAreaWithLabel";
 
 import { useGenerateQR } from "@/hooks/useGenerateQR";
 
-import { QR } from "@/types/qr";
+import { QR, SettingVariables } from "@/types/qr";
 import { fetcher } from "@/lib/helpers";
 import { TypographyH1, TypographyH3 } from "@/components/ui/typography";
-import { QRCard, SettingVariables } from "@/components/qrCard";
+import { QRCard } from "@/components/qrCard";
 import { Toaster } from "@/components/ui/toaster";
 import { QRCode } from "@/components/qrCode";
 import { Footer } from "@/components/footer";
@@ -30,6 +30,7 @@ import {
 } from "@/components/menuAttributes";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NUMBER_OF_GENERATED_QR, QR_CODE_URL } from "@/constants/api";
+import { useTimer } from "@/hooks/useTimer";
 
 export default function Home() {
   const { data: QRData, isLoading: QRLoadingData } = useSwr<QR[]>(
@@ -37,6 +38,7 @@ export default function Home() {
     fetcher
   );
   const { mutate } = useSWRConfig();
+  const { elapsedTime, handlePause, handleReset, handleStart } = useTimer();
 
   const homePage = React.useRef(null);
   const { request, data, setData, isLoading } = useGenerateQR();
@@ -49,13 +51,19 @@ export default function Home() {
   const [prompt, setPrompt] = React.useState<string | null>(null);
   const [variables, setVariables] =
     React.useState<InitialVariablesMenu>(initialVariables);
+  const [isTimerActive, setIsTimerActive] = React.useState(false);
 
   const [qrCodes, setQrCodes] = React.useState<string[]>([]);
 
   const handleQrGenerationRequest = () => {
+    if (!isTimerActive) setIsTimerActive(true);
+
     setQrCodes([]);
     setData(undefined);
     request(prompt, selectedInitialImage, variables);
+
+    handleReset();
+    handleStart();
   };
 
   const getSettingVariables = (qr: QR): SettingVariables => {
@@ -86,12 +94,22 @@ export default function Home() {
     };
   };
 
+  const formattedElapsedTime = () => {
+    return elapsedTime;
+  };
+
   React.useEffect(() => {
     if (data?.length && !qrCodes.length) {
       setQrCodes(data);
       mutate("/api/qr");
     }
   }, [data, qrCodes]);
+
+  React.useEffect(() => {
+    if (!isLoading) {
+      handlePause();
+    }
+  }, [isLoading]);
 
   return (
     <div ref={homePage} className="container w-full h-full mx-auto my-auto">
@@ -135,8 +153,10 @@ export default function Home() {
                   content: (
                     <div className="text-center">
                       <span className="font-bold">Optional. </span> Required by
-                      ControlNet, but we handle the <br /> image's generation
-                      with the prompt through the SD Api
+                      ControlNet. We handle the <br /> image's generation with
+                      the prompt through the SD Api. <br />
+                      <span className="font-bold">Important: </span> for optimal
+                      results, loaded images should have a 1:1 aspect ratio
                     </div>
                   ),
                 }}
@@ -158,34 +178,75 @@ export default function Home() {
             <div className="w-full max-w-md flex justify-center">
               <Button
                 variant={"default"}
-                className="w-full h-14 text-lg mt-5"
+                className={`w-full h-14 text-lg mt-5 ${
+                  isLoading ? "cursor-progress" : ""
+                }`}
                 disabled={!prompt?.trim() || isLoading}
-                onClick={handleQrGenerationRequest}
+                onClick={() => (handleReset(), handleQrGenerationRequest())}
               >
-                {isLoading ? "Loading" : "Generate AI QR"}
+                {isLoading ? (
+                  <svg
+                    className="motion-reduce:hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : undefined}
+                {isLoading ? "Processing..." : "Generate AI QR"}
               </Button>
             </div>
           </div>
           <Separator orientation="vertical" className="h-auto bg-slate-300" />
-          <div className="w-1/4 max-w-md flex flex-col items-center gap-y-10 justify-center">
-            <QRCode
-              id={0}
-              qrCodes={[...qrCodes]}
-              size="medium"
-              isLoading={isLoading}
-            />
-            <div className="flex gap-x-4">
-              {[...Array(NUMBER_OF_GENERATED_QR - 1).keys()].map((n) => {
-                return (
-                  <QRCode
-                    key={n + 1}
-                    id={n + 1}
-                    qrCodes={qrCodes}
-                    size="small"
-                    isLoading={isLoading}
-                  />
-                );
-              })}
+          <div className="w-1/4 max-w-md flex flex-col items-center gap-y-10 justify-center relative">
+            <div className="flex flex-col gap-8">
+              <QRCode
+                id={0}
+                qrCodes={[...qrCodes]}
+                size="medium"
+                isLoading={isLoading}
+              />
+              <div className="flex gap-x-4">
+                {[...Array(NUMBER_OF_GENERATED_QR - 1).keys()].map((n) => {
+                  return (
+                    <QRCode
+                      key={n + 1}
+                      id={n + 1}
+                      qrCodes={qrCodes}
+                      size="small"
+                      isLoading={isLoading}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+            <div className="mt-4 absolute bottom-4">
+              {isTimerActive && (
+                <React.Fragment>
+                  <span className="text-slate-400 italic">Elapsed time - </span>
+                  <span
+                    className={`font-semibold w-20 inline-block ${
+                      elapsedTime > 50 ? "text-red-400" : "text-slate-600 "
+                    }`}
+                  >
+                    {formattedElapsedTime()}
+                    <span> s</span>
+                  </span>
+                </React.Fragment>
+              )}
             </div>
           </div>
         </CardContent>
@@ -213,7 +274,7 @@ export default function Home() {
                 controlImage={qr.control_image}
                 initImage={qr.init_image}
                 settingVariables={getSettingVariables(qr)}
-                className="my-5"
+                className="my-6"
               />
             );
           })
