@@ -24,5 +24,5 @@ export const GENERATING_QR_ERROR_LIMIT_API: ErrorInterface = {
 };
 export const GENERATING_QR_ERROR_MAX_ERRORS: ErrorInterface = {
   status: "error",
-  message: "Max attempts number exceeded.",
+  message: "Request generation time exceeded.",
 };

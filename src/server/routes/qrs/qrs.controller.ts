@@ -186,7 +186,7 @@ const generateQrWithImage = async (
 };
 
 const handleRequestWithTimeout = async (time: number, url: string) => {
-  const MAX_ATTEMPTS = 15;
+  const MAX_ATTEMPTS = 20;
   let attempts = 0;
 
   const recursiveRequest = async (): Promise<

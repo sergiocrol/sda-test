@@ -2,7 +2,6 @@ import React from "react";
 import { Link2Icon } from "@radix-ui/react-icons";
 
 import { InputWithLabel } from "./ui/inputWithLabel";
-import { Label } from "./ui/label";
 import {
   Select,
   SelectContent,

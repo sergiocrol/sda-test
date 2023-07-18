@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 
 import { Card } from "@/components/ui/card";
+import { ExternalLinkIcon } from "@radix-ui/react-icons";
 import {
   Dialog,
   DialogContent,
@@ -11,29 +12,7 @@ import {
 } from "@radix-ui/react-dialog";
 import { Separator } from "./ui/separator";
 
-export interface SettingVariables {
-  controlnet_model: string;
-  controlnet_type: string;
-  model_id: string;
-  width: number;
-  height: number;
-  controlnet_conditioning_scale: string;
-  scheduler: string | null | undefined;
-  num_inference_steps: number;
-  guidance_scale: number;
-  strength: number;
-}
-
-interface IQRCard {
-  parentRef: React.MutableRefObject<null>;
-  id: number;
-  output: string[];
-  prompt: string;
-  initImage: string;
-  controlImage: string;
-  settingVariables: SettingVariables;
-  className?: string;
-}
+import { IQRCard } from "@/types/qr";
 
 export const QRCard = (props: IQRCard) => {
   const {
@@ -62,7 +41,12 @@ export const QRCard = (props: IQRCard) => {
 
   return (
     <div>
-      <Card className={`flex p-2 ${className}`}>
+      <Card
+        className={`flex p-2 relative brightness-90 hover:brightness-100 ${className}`}
+      >
+        <div className="absolute bg-teal-400 text-slate-800 font-bold p-1 h-8 w-8 flex justify-center items-center -top-3 -left-3 rounded-sm shadow-md">
+          {id}
+        </div>
         <Dialog>
           <DialogTrigger
             className="cursor-pointer w-40"
@@ -130,59 +114,80 @@ export const QRCard = (props: IQRCard) => {
             </DialogOverlay>
           </DialogPortal>
         </Dialog>
-        <div className="flex ml-12 mr-12">
+        <div className="flex w-full ml-12 mr-12">
           <div className="flex flex-col gap-y-1 w-1/3">
             <span className="font-bold text-md">Prompt</span>
             <span className="text-sm">{prompt}</span>
           </div>
           <Separator orientation="vertical" className="mx-4" />
-          <div className="flex flex-col w-2/3 gap-y-2">
+          <div className="flex flex-col w-2/3 gap-y-3">
             <div className="flex gap-x-4 mb-1 mt-3">
-              <div className="flex flex-col gap-y-1 w-1/2">
+              <div className="flex flex-col gap-y-1 w-2/5">
                 <span className="font-bold text-sm">Control image</span>
                 <a
                   href={controlImage}
                   target="_blank"
-                  className="overflow-clip text-xs text-sky-600"
+                  className="overflow-clip text-s text-sky-600"
                 >
-                  {controlImage}
+                  Control image link{" "}
+                  {<ExternalLinkIcon className="inline w-4" />}
                 </a>
               </div>
-              <div className="flex flex-col gap-y-1 w-1/2">
+              <div className="flex flex-col gap-y-1 w-2/5">
                 <span className="font-bold text-sm">Initial image</span>
                 <a
                   href={initImage}
                   target="_blank"
-                  className="overflow-clip text-xs text-sky-600"
+                  className="overflow-clip text-s text-sky-600"
                 >
-                  {initImage}
+                  Initial image link {<ExternalLinkIcon className="inline" />}
                 </a>
+              </div>
+              <div className="flex flex-col gap-y-1 w-2/3">
+                <span className="font-bold text-sm">QRs images</span>
+                <div className="flex flex-row gap-3">
+                  {output.map((url, idx) => {
+                    return (
+                      <React.Fragment key={url}>
+                        <a
+                          href={url}
+                          target="_blank"
+                          className="overflow-clip text-s text-sky-600"
+                        >
+                          Sample {idx + 1}
+                        </a>
+                        {idx < output.length - 1 && (
+                          <Separator
+                            orientation="vertical"
+                            className="h-full bg-slate-300 mx-1"
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div className="flex gap-x-4">
               <div className="flex flex-col w-1/5">
                 <span className="font-bold text-sm">Controlnet scale</span>
-                <span className="text-xs">{controlnet_conditioning_scale}</span>
+                <span className="text-sm">{controlnet_conditioning_scale}</span>
               </div>
-              <div className="flex flex-col w-1/5 overflow-hidden ">
+              <div className="flex flex-col w-1/4 overflow-hidden ">
                 <span className="font-bold text-sm">Controlnet model</span>
-                <span className="text-xs">{controlnet_model}</span>
+                <span className="text-sm">{controlnet_model}</span>
               </div>
               <div className="flex flex-col w-1/5 overflow-hidden ">
                 <span className="font-bold text-sm">Controlnet type</span>
-                <span className="text-xs">{controlnet_type}</span>
+                <span className="text-sm">{controlnet_type}</span>
               </div>
-              <div className="flex flex-col w-1/5 overflow-hidden ">
+              <div className="flex flex-col w-1/4 overflow-hidden ">
                 <span className="font-bold text-sm">Model ID</span>
-                <span className="text-xs">{model_id}</span>
-              </div>
-              <div className="flex flex-col w-1/5 overflow-hidden ">
-                <span className="font-bold text-sm">Guidance scale</span>
-                <span className="text-xs">{guidance_scale}</span>
+                <span className="text-sm">{model_id}</span>
               </div>
             </div>
             <div className="flex gap-x-4">
-              <div className="flex flex-col w-1/5 overflow-hidden ">
+              <div className="flex flex-col w-1/3 overflow-hidden ">
                 <span className="font-bold text-sm">Scheduler</span>
                 <span
                   title={scheduler || ""}
@@ -193,19 +198,23 @@ export const QRCard = (props: IQRCard) => {
               </div>
               <div className="flex flex-col w-1/5 overflow-hidden ">
                 <span className="font-bold text-sm">Steps</span>
-                <span className="text-xs">{num_inference_steps}</span>
+                <span className="text-sm">{num_inference_steps}</span>
               </div>
               <div className="flex flex-col w-1/5 overflow-hidden ">
                 <span className="font-bold text-sm">Strength</span>
-                <span className="text-xs">{strength}</span>
+                <span className="text-sm">{strength}</span>
               </div>
-              <div className="flex flex-col w-1/5 overflow-hidden ">
+              <div className="flex flex-col w-1/6 overflow-hidden ">
                 <span className="font-bold text-sm">Width</span>
-                <span className="text-xs">{width}</span>
+                <span className="text-sm">{width}</span>
               </div>
-              <div className="flex flex-col w-1/5 overflow-hidden ">
+              <div className="flex flex-col w-1/6 overflow-hidden ">
                 <span className="font-bold text-sm">Height</span>
-                <span className="text-xs">{height}</span>
+                <span className="text-sm">{height}</span>
+              </div>
+              <div className="flex flex-col w-1/4 overflow-hidden ">
+                <span className="font-bold text-sm">Guidance scale</span>
+                <span className="text-sm">{guidance_scale}</span>
               </div>
             </div>
           </div>
