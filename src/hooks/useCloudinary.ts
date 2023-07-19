@@ -18,8 +18,7 @@ export function useCloudinary(img: File | null): any {
       setIsLoading(true);
       uploadImage(cloudinaryBaseUrl, file, uploadPreset)
         .then((data) => setData(data))
-        .catch(() => setIsError(true))
-        .finally(() => setIsLoading(false));
+        .catch(() => (setIsError(true), setIsLoading(false)));
     }
   };
 

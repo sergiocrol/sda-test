@@ -179,6 +179,7 @@ export interface StableDiffusionApiResponse {
   fetch_result?: string;
   status: "success" | "error" | "processing" | "failed";
   message?: string;
+  messege?: string;
 }
 
 export interface StableDiffusionProcessingResponse {
@@ -186,6 +187,7 @@ export interface StableDiffusionProcessingResponse {
   output: string[];
   status: "success" | "error" | "processing" | "failed";
   message?: string;
+  messege?: string;
 }
 
 export interface SDARequestProps {

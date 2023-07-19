@@ -102,6 +102,7 @@ export default function Home() {
     if (data?.length && !qrCodes.length) {
       setQrCodes(data);
       mutate("/api/qr");
+      handlePause();
     }
   }, [data, qrCodes]);
 

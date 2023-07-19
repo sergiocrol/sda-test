@@ -1,14 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import { httpGetAllQrs, httpPostQr } from "@/server/routes/qrs/qrs.controller";
+import { httpPostWebhook } from "@/server/routes/webhook/webhook.controller";
 import onError from "@/server/middlewares/errors";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-router.get(httpGetAllQrs);
-router.post(httpPostQr);
-// router.post(httpGenerateQr);
-// router.post(httpGenerateImage);
+router.post(httpPostWebhook);
 
 export default router.handler({ onError });
