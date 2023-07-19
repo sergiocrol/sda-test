@@ -85,6 +85,83 @@ export const httpGenerateQr = catchAsyncErrors(
   }
 );
 
+export const httpGenerateQrCode = catchAsyncErrors(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    const userData: SDARequestProps = req.body;
+
+    const { prompt, image, variables } = userData;
+
+    let response;
+
+    response = generateQrCodeWithImage(prompt, image!, variables);
+    const result = await response;
+
+    if (result?.status === "processing") {
+      res.status(200).json(result.data);
+    } else if (result?.status === "success") {
+      const response = result as SuccessQrResponse;
+
+      res.status(200).json(response.data);
+    } else {
+      res.status(500).json(result);
+    }
+  }
+);
+
+export const httpGenerateImage = catchAsyncErrors(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    const userData: SDARequestProps = req.body;
+
+    const { prompt, image, controlImage, variables } = userData;
+
+    let response: Promise<
+      | StableDiffusionProcessingResponse
+      | ErrorInterface
+      | SuccessQrResponse
+      | undefined
+    >;
+
+    response = generateQrWithoutImage(prompt, variables);
+
+    const result = await response;
+
+    if (result?.status === "success" || result?.status === "processing") {
+      const response = result;
+
+      res.status(200).json(response);
+    } else {
+      res.status(500).json(result);
+    }
+  }
+);
+
+export const httpProcessingResult = catchAsyncErrors(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    const processingData: { url: string } = req.body;
+
+    const { url } = processingData;
+
+    let response: Promise<
+      | StableDiffusionProcessingResponse
+      | ErrorInterface
+      | SuccessQrResponse
+      | undefined
+    >;
+
+    response = handleProcessingResult(url);
+
+    const result = await response;
+
+    if (result?.status === "success" || result?.status === "processing") {
+      const response = result;
+
+      res.status(200).json(response);
+    } else {
+      res.status(500).json(result);
+    }
+  }
+);
+
 const generateQrWithoutImage = async (
   prompt: string,
   variables: InitialVariablesMenu
@@ -115,27 +192,29 @@ const generateQrWithoutImage = async (
     ...variables,
   };
 
-  if (sdaResponse.status === "success") {
-    const response = await generateQrWithImage(
-      prompt,
-      params.initImage,
-      params
-    );
-    return response;
-  } else if (sdaResponse.status === "processing" && sdaResponse.fetch_result) {
-    const response = await handleRequestWithTimeout(
-      TIME_TO_REQUEST,
-      sdaResponse.fetch_result
-    );
-    if (response.status === "error") {
-      return formatError(GENERATING_QR_ERROR);
-    } else {
-      const response = generateQrWithImage(prompt, params.initImage, params);
-      return response;
-    }
-  } else {
-    return formatError(GENERATING_QR_ERROR);
-  }
+  return sdaResponse;
+  // manejamos la respuesta en FE
+  // if (sdaResponse.status === "success") {
+  //   const response = await generateQrWithImage(
+  //     prompt,
+  //     params.initImage,
+  //     params
+  //   );
+  //   return response;
+  // } else if (sdaResponse.status === "processing" && sdaResponse.fetch_result) {
+  //   const response = await handleRequestWithTimeout(
+  //     TIME_TO_REQUEST,
+  //     sdaResponse.fetch_result
+  //   );
+  //   if (response.status === "error") {
+  //     return formatError(GENERATING_QR_ERROR);
+  //   } else {
+  //     const response = generateQrWithImage(prompt, params.initImage, params);
+  //     return response;
+  //   }
+  // } else {
+  //   return formatError(GENERATING_QR_ERROR);
+  // }
 };
 
 const generateQrWithImage = async (
@@ -168,6 +247,50 @@ const generateQrWithImage = async (
       TIME_TO_REQUEST,
       sdaResponse.fetch_result
     );
+    return response;
+  } else if (
+    sdaResponse?.status === "error" &&
+    sdaResponse?.message?.includes(EXCEEDED_LIMIT_MESSAGE_KEY)
+  ) {
+    return formatError(GENERATING_QR_ERROR_LIMIT_API);
+  } else {
+    return formatError({
+      status: "error",
+      message:
+        sdaResponse?.message ||
+        sdaResponse?.messege ||
+        GENERATING_QR_ERROR.message,
+    });
+  }
+};
+
+const generateQrCodeWithImage = async (
+  prompt: string,
+  image: string,
+  variables: InitialVariablesMenu
+) => {
+  const params: SDAVariableParameters = {
+    prompt,
+    initImage: image,
+    controlImage: QR_CODE_URL,
+    ...variables,
+  };
+
+  const dataSDA = getParameterizedDataStructure(params);
+
+  const sdaResponse: StableDiffusionQRApiResponse = await generateQRRequest(
+    dataSDA
+  );
+
+  if (
+    sdaResponse?.status === "success" ||
+    sdaResponse?.status === "processing"
+  ) {
+    const response = {
+      status: sdaResponse.status,
+      data: sdaResponse,
+      image,
+    };
     return response;
   } else if (
     sdaResponse?.status === "error" &&
