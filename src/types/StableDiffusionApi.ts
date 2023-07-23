@@ -78,7 +78,13 @@ export const schedulers = [
 ] as const;
 export type Scheduler = (typeof schedulers)[number];
 
-export const models = ["midjourney", "ghostmix", "sd-1.5"] as const;
+export const models = [
+  "midjourney",
+  "ghostmix",
+  "sd-1.5",
+  "dream-shaper-8797",
+  "rev-animated",
+] as const;
 export type ModelID = (typeof models)[number];
 
 export type BooleanString = "yes" | "no";
