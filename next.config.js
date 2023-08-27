@@ -4,9 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn.stablediffusionapi.com",
-        port: "",
-        pathname: "/**",
+        hostname: "**",
       },
     ],
   },
