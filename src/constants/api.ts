@@ -1,6 +1,6 @@
 import { ErrorInterface } from "@/types/error";
 
-export const SDA_QR_API_URL = "https://stablediffusionapi.com/api/v3/text2img";
+export const SDA_QR_API_URL = `${process.env.NEXT_PUBLIC_SD_API_BASE_URL}/text2img`;
 export const API_KEY = process.env
   .NEXT_PUBLIC_STABLE_DIFFUSION_API_KEY as string;
 export const NUMBER_OF_GENERATED_IMAGE = 1;

@@ -35,7 +35,7 @@ export const generateSDtextToImgRequest = async (
 export const generateQRRequest = async (
   props: StableDiffusionQRApiRequest
 ): Promise<StableDiffusionQRApiResponse> => {
-  const SDA_QR_API_URL = "https://stablediffusionapi.com/api/v5/controlnet";
+  const SDA_QR_API_URL = `${process.env.NEXT_PUBLIC_SD_CONTROLNET_API_BASE_URL}/controlnet`;
 
   const data = props;
 
