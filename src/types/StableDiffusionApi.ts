@@ -81,6 +81,7 @@ export type Scheduler = (typeof schedulers)[number];
 export const models = [
   "midjourney",
   "ghostmix",
+  "anything-v3",
   "sd-1.5",
   "dream-shaper-8797",
   "rev-animated",
@@ -140,6 +141,7 @@ export interface StableDiffusionQRApiResponse {
 
 export interface StableDiffusionTextToImgApiRequest {
   key: string;
+  model_id: ModelID;
   prompt: string;
   negative_prompt: string;
   width: number;

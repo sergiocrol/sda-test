@@ -101,7 +101,6 @@ export const generateImage = async (props: SDARequestProps) => {
   const ADD_QR_API_URL = `${process.env.NEXT_PUBLIC_API_BASE_URL}/generate/image`;
 
   const data = props;
-
   try {
     const response: AxiosResponse<any> = await axios.post(
       ADD_QR_API_URL,

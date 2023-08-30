@@ -103,6 +103,7 @@ export const httpGenerateQrCode = catchAsyncErrors(
 
       res.status(200).json(response.data);
     } else {
+      console.log("result", result);
       res.status(500).json(result);
     }
   }
@@ -168,6 +169,7 @@ const generateQrWithoutImage = async (
 ) => {
   const dataSDA: StableDiffusionTextToImgApiRequest = {
     key: API_KEY,
+    model_id: variables.modelID,
     prompt,
     negative_prompt: "ugly, disfigured, low quality, blurry, nsfw",
     width: variables.width,
@@ -182,9 +184,10 @@ const generateQrWithoutImage = async (
     track_id: "track_id_test",
   };
 
+  console.log("sda init");
   const sdaResponse: StableDiffusionApiResponse =
     await generateSDtextToImgRequest(dataSDA);
-
+  console.log("sda response: ", sdaResponse);
   const params: SDAVariableParameters = {
     prompt,
     initImage: sdaResponse?.output && sdaResponse?.output[0],
@@ -281,7 +284,7 @@ const generateQrCodeWithImage = async (
   const sdaResponse: StableDiffusionQRApiResponse = await generateQRRequest(
     dataSDA
   );
-
+  console.log("sda response: ", sdaResponse, dataSDA);
   if (
     sdaResponse?.status === "success" ||
     sdaResponse?.status === "processing"
@@ -296,6 +299,7 @@ const generateQrCodeWithImage = async (
     sdaResponse?.status === "error" &&
     sdaResponse?.message?.includes(EXCEEDED_LIMIT_MESSAGE_KEY)
   ) {
+    console.log("error", sdaResponse);
     return formatError(GENERATING_QR_ERROR_LIMIT_API);
   } else {
     return formatError({

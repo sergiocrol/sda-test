@@ -6,7 +6,7 @@ export const showGenericToast = (
   toast({
     variant: "destructive",
     title: <span className="text-lg">{title}</span>,
-    description: <span className="text-base">{subtitle}</span>,
+    description: <span className="text-base">{JSON.stringify(subtitle)}</span>,
   });
 };
 
