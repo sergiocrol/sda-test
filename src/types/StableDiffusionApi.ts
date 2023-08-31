@@ -137,6 +137,7 @@ export interface StableDiffusionQRApiResponse {
   status: "success" | "error" | "processing" | "failed";
   message?: string;
   messege?: string;
+  image_links?: string[];
 }
 
 export interface StableDiffusionTextToImgApiRequest {
