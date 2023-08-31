@@ -164,15 +164,19 @@ export const useSDA = (): SDAReturnedValues => {
     generateQRCode(requestProps)
       .then((data: StableDiffusionQRApiResponse) => {
         if (data?.status === "processing") {
-          handleRequestWithTimeout(
-            TIME_TO_REQUEST,
-            (data as StableDiffusionApiResponse).fetch_result!,
-            (dataProcessing: StableDiffusionProcessingResponse) => {
-              setIsLoading(false);
-              setData(dataProcessing.output);
-              addQrToDB(data, image!, dataProcessing);
-            }
-          );
+          setTimeout(() => {
+            setIsLoading(false);
+            setData(data.image_links);
+          }, 5000);
+          // handleRequestWithTimeout(
+          //   TIME_TO_REQUEST,
+          //   (data as StableDiffusionApiResponse).fetch_result!,
+          //   (dataProcessing: StableDiffusionProcessingResponse) => {
+          //     setIsLoading(false);
+          //     setData(dataProcessing.output);
+          // addQrToDB(data, image!, dataProcessing);
+          //   }
+          // );
         } else if (data?.status === "success") {
           setData(data.output);
           addQrToDB(data, image!);
